@@ -1,0 +1,42 @@
+@startuml sample
+
+package cms.process {
+    class SampleClass1 {
+        VariableOne : String
+        VariableTwo : int
+        methodOne(value : int) : BigDecimal
+        methodTwo()
+        methodThree(valueOne : int, valueTwo : String)
+        methodFour(valueOne : int, valueTwo : String) : Boolean
+        methodFive(valueOne : int) : List<String>
+    }
+    SampleClass1 --|> SampleClass2
+    SampleClass1 --> cms.utility.SampleUtility
+    SampleClass1 *-- SampleClass5
+
+    abstract SampleClass2 {
+
+    }
+
+    class SampleClass3 {
+        methodTwo()
+        methodThree(valueOne : int, valueTwo : String)
+        methodFour(valueOne : int, valueTwo : String) : Boolean
+    }
+    SampleClass3 --|> SampleClass1
+
+    SampleClass4 --> SampleClass1
+    SampleClass4 ..> SampleInterface1
+
+    interface SampleInterface1
+}
+
+package cms.utility {
+    class SampleUtility {
+        var1 : int
+        var2 : String
+        calculate2(value : BigDecimal) : int
+    }
+}
+
+@enduml
