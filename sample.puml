@@ -1,5 +1,13 @@
 @startuml sample
 
+!theme cerulean-outline
+
+class cms.process.SampleClass6 {
+    var1 : int
+    var2 : String
+    calculate2(value : BigDecimal) : int
+}
+
 package cms.process {
     class SampleClass1 {
         VariableOne : String

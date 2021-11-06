@@ -62,16 +62,22 @@ class WriteGosu():
 
     def create_variables(self, file, in_structure:PlantContent):
         for variable in in_structure.variables:
-            var_name = '_' + variable[0].lower() + variable[1:]
-            var_as = variable[0].upper() + variable[1:]
-            var_type = in_structure.variables[variable]
-            file.write(f'  var {var_name} : {var_type} as {var_as}\n')
+            var_name = '_' + variable.name[0].lower() + variable.name[1:]
+            var_as = variable.name[0].upper() + variable.name[1:]
+            var_type = variable.type
+            if variable.scope == 'protected':
+                file.write(f'  protected var {var_name} : {var_type} as {var_as}\n')
+            if variable.scope == 'private':
+                file.write(f'  var {var_name} : {var_type}\n')
+            if variable.scope == 'public':
+                file.write(f'  var {var_name} : {var_type} as {var_as}\n')
 
     def create_methods(self, file, in_structure:PlantContent):
         for method in in_structure.methods:
             method_name = method.name
             method_return_type = method.return_type
-            file.write('  public function ' + method_name + ' (')
+            method_scope = method.scope
+            file.write(f'  {method_scope} function ' + method_name + ' (')
             for idx, param in enumerate(method.parameters):
                 param_type = method.parameters[param]
                 file.write(f'{param} : {param_type}')

@@ -91,3 +91,21 @@ def get_namespace(in_line: str) -> str:
             if (idx + 1) < len(line_split) -1:
                 namespace = namespace + '.'
     return namespace
+
+def get_scope(in_name: str) -> str:
+        scope_types = {'+', '-', '~', '#'}
+        scope_type = 'public'
+        test_name = in_name
+        if test_name[0] in scope_types:
+            if test_name[0] == '+':
+                scope_type = 'public'
+            elif test_name[0] == '-':
+                scope_type = 'private'
+            elif test_name[0] == '~':
+                scope_type = 'protected'
+            elif test_name[0] == '#':
+                scope_type = 'protected'
+            test_name = test_name[1:]
+
+        return scope_type, test_name
+

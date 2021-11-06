@@ -1,0 +1,103 @@
+@startuml RatingChanges
+title Rating Changes
+!theme cerulean-outline
+package cms.lob.workcomp.rating {
+    class WorkCompRatingParams_CMS {
+        +RiskClass : WCRiskClass_CMS
+        +OccupationRiskClass : String
+        +BusinessClassLineCode : String
+        +WorkersClass : String
+        +WorkSafetyLevel : WorkSafetyLevel_CMS
+        +InsuredYelType : YELType_CMS
+        +FreeTimeAccidentsScope : FreeTimeAccidentScope_CMS
+        +OccupationalRiskPremiumForCovClassCode : BigDecimal
+        +BasicFeeForCovOccCode : BigDecimal
+        +WorkSafetyPremiumForCovOccCode : BigDecimal
+        +PoolPremiumForCovOccCode : BigDecimal
+        +InvestmentBenefitsForCovOccCode : BigDecimal
+        +BrokerBenefitForCovOccCode : BigDecimal
+        +WorkSafetyLevelForCovOccCode : BigDecimal
+        +TotalTermPremiumForCov : BigDecimal
+        +YearlyPremiumForNonMinimumCost : BigDecimal
+        +MinimumFeeEffectForCov : BigDecimal
+        +OccupancyCodeIncome : BigDecimal
+        +CompanyClassification : CompanyClassification_CMS
+        +OccupancyGroupCode : String
+        +InstallmentsPeriodicity : BillingPeriodicity
+        +CoverageYearlyPremiumAfterMinEffect : BigDecimal
+        +BrokerAdministration : Boolean
+        +WorkplaceOccupationalRiskPremiumTotal :BigDecimal
+        +TotalRiskPremiumIisiTariff : BigDecimal
+        +SalariesAmount : BigDecimal
+        +UndewritingParameter : UnderwritingParameter_CMS
+        +InvoicingBillingModel : InvoicingBillingModel_CMS
+        +CutoffLimit : String
+        +InputBasicPerMille : BigDecimal
+        +MinimumFeeEffectProrata : BigDecimal
+        +TariffSystem : TariffSystem_CMS
+        -Line : WorkCompLine_CMS
+        -EmployeeGroup : WCompEmployeeGroup_CMS
+        -Branch : PolicyPeriod
+
+        +setOccupancyCodeInformation()
+        +setUnderwritingParameter()
+        +setTariffSystem()
+        +fillParamsForEmployeeGroupIisiTariff()
+    }
+
+    class WorkCompRatingEngine {
+        ~rateSlice()
+        -rateLine()
+        -rateWCompEmployeeGroup()
+        -calculateMinimumAdjustment()
+        -calculateMinimumPremiumProration()
+        -distributeMinimumFee()
+        -adjustBrokerBenefitWithMaximumAmount()
+        -rateEmployeeGroupCov()
+        -calculateMinimumPremiumDistribution()
+        -rateOccupancyCodeInCov()
+        -setCostDataAmountInRatingParams()
+        -getRatingStepsForCov()
+        -executeRateRoutineForMinimumPremiumFeeEffect()
+        -executeRateRoutineForPremiumType()
+        -getCostEndDate()
+        -getCostStartDate()
+        -createEmpGroupCovCostData()
+        -createEmpGroupCovCostDataWithKeys()
+        -setCostDataProperties()
+        ~rateWindow()
+        -calculateInstalmentFee()
+        -isCoveragePaidOnInstalments()
+        -instalmentFeePatternForCov()
+        ~createCostDataForCost()
+    }
+    WorkCompRatingEngine --|> AbstractWorkCompRatingEngine
+
+    class WorkCompTariffSystemRatingEngine {
+        +selectAutomaticTariffSystem()
+        -calculateTotalRiskPremiumForWorkplaceAccidentsCov() : BigDecimal
+        -queryRateTableForTariffSystem() : TariffSystemCategory_CMS
+    }
+    WorkCompTariffSystemRatingEngine --|> AbstractWorkCompRatingEngine
+
+    abstract AbstractWorkCompRatingEngine {
+        ~rateOnly()
+        ~createRatingParamsForSlice()
+        ~createRateRoutineParameterMap()
+        ~executeRoutineWithoutCostDataForOccCode()
+        -rateSlices()
+    }
+    AbstractWorkCompRatingEngine --|> gw.rating.AbstractRatingEngine
+    AbstractWorkCompRatingEngine --> WorkCompRatingParams_CMS
+}
+package gw.rating {
+    abstract AbstractRatingEngine {
+    }
+    AbstractRatingEngine --|> AbstractRatingEngineBase
+
+    abstract AbstractRatingEngineBase {
+
+    }
+}
+
+@enduml

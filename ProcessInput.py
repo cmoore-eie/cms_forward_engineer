@@ -5,7 +5,7 @@ from Utilities import *
 class ProcessInput:
 
     def process_input(self):
-        with open('sample.puml') as input_file:
+        with open(self.json_config['source_document']) as input_file:
             for line in input_file:
                 self.lines.append(line.strip())
                 print(line)
@@ -64,7 +64,7 @@ class ProcessInput:
         else:
             uses_short_name = uses_name.split('.')[-1] 
             self.current_structure.add_import(uses_name)
-        self.current_structure.variables[uses_short_name] = uses_short_name
+        self.current_structure.add_variable(uses_short_name, uses_short_name)
         self.current_structure.add_uses(uses_short_name)
 
     def process_implements(self, in_line):
@@ -107,13 +107,16 @@ class ProcessInput:
             composition_short_name = composition_name.split('.')[-1] 
             self.current_structure.add_import(composition_name)
             find_plant_structure(self.plant_structures, namespace, composition_short_name)
-        self.current_structure.variables[composition_short_name] = f'{composition_short_name}[]'
+        self.current_structure.add_variable(composition_short_name, f'{composition_short_name}[]')
         self.current_structure.add_composition(composition_short_name)
 
     def process_variable(self, in_line):
         process_line = in_line.replace(' ', '')
         variable_name = process_line.split(':')[0]
-        variable_type = process_line.split(':')[1]
+        if len(process_line.split(':')) == 1:
+            variable_type = 'None'
+        else:
+            variable_type = process_line.split(':')[1]
         self.current_structure.add_variable(variable_name, variable_type)
 
     def process_method(self, in_line):
@@ -135,7 +138,10 @@ class ProcessInput:
         if not method_params[1] == '':
             for param in method_params[1].split(','):
                 param_name = param.split(':')[0]
-                param_type = param.split(':')[1]
+                if len(param.split(':')) == 1:
+                    param_type = 'None'
+                else:
+                    param_type = param.split(':')[1]
                 found_method.add_parameter(param_name, param_type)
 
         self.current_structure.add_method(method_name, method_return_type)
@@ -148,6 +154,13 @@ class ProcessInput:
 
     def process_type(self, in_line: str, in_type: str):
         self.current_type = extract_name(in_line)
+        # print(extract_name(in_line))
+        namespace = get_namespace(self.current_type)
+        if not namespace == '':
+            if not self.current_package == namespace:
+                self.current_type = self.current_type.split('.')[-1] 
+                self.current_package = namespace
+        
         self.current_structure = find_plant_structure(
             self.plant_structures, self.current_package, self.current_type)
         if self.current_structure.type == '':

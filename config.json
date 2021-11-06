@@ -1,5 +1,6 @@
 {
     "target_directory": "/Users/christophermoore/Scratch/gosu",
     "source_document": "/Users/christophermoore/Development/Projects/cms/cms_community/plant_forward_engineer/sample.puml",
-    "default_package": "cms.test"
+    "default_package": "cms.test",
+    "output_type": "gosu"
 }
