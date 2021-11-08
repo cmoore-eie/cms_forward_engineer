@@ -1,7 +1,13 @@
 import os
 from PlantContent import PlantContent
 
+relationships = {'-->', '..>', '*--'}
+
 def extract_name(in_line: str) -> str:
+    '''
+    Extracts the name from the type construct. Information that is not needed will be removed
+    such as the streotype.
+    '''
     types = {'package', 'class', 'abstract', 'interface'
     , 'enum', 'abstract class', 'entity'}
     process_type: str = ''
@@ -11,6 +17,8 @@ def extract_name(in_line: str) -> str:
             break
     
     process_line = in_line.replace(' ', '')
+    if '<<' in process_line:
+        process_line = process_line.split('<<')[0]
     process_line = process_line.replace(process_type, '')
     found_name = process_line.split('{')[0]
     return found_name
@@ -31,6 +39,9 @@ def find_plant_structure(plant_structures: list[PlantContent], in_package: str, 
     return structure
 
 def isvariable(in_line: str) -> bool:
+    for relationship in relationships:
+        if relationship in in_line:
+            return False
     if '(' in in_line:
         return False
     elif ':' in in_line:
@@ -109,3 +120,11 @@ def get_scope(in_name: str) -> str:
 
         return scope_type, test_name
 
+def alternate_name(in_line: str):
+    return_value_alternative = in_line
+    retrun_value_name = in_line
+    line_split = in_line.split(':')
+    if len(line_split) > 1:
+        retrun_value_name = line_split[0]
+        return_value_alternative = line_split[1]
+    return return_value_alternative, retrun_value_name

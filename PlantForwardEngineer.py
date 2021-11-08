@@ -53,7 +53,6 @@ def main(argv):
             print(f'The configuration file {config_file} has not been found')
             sys.exit(1)
         config_json = checkAndFixJson(json.load(file))
-        print(config_json)
         process = ProcessInput(config_json)
         process.process_input()
         if config_json['output_type'].lower() == 'gosu':
