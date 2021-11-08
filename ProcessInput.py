@@ -5,11 +5,10 @@ from Utilities import *
 class ProcessInput:
 
     def process_input(self):
+        print('Processing Source File')
         with open(self.json_config['source_document']) as input_file:
             for line in input_file:
                 self.lines.append(line.strip())
-                print(line)
-        print(self.lines)
         self.process_lines()
 
     def process_lines(self):
@@ -28,7 +27,6 @@ class ProcessInput:
                 self.process_type(line, 'enum')
             else:
                 self.process_line(line)
-        print(self.plant_structures)
 
     def process_line(self, in_line: str):
         if self.current_type == '':
@@ -50,21 +48,20 @@ class ProcessInput:
 
     def process_uses(self, in_line):
         process_line = in_line.replace(' ', '')
-        uses_name = process_line.split('-->')[1]
-        parent_name = process_line.split('-->')[0]
-        structure = find_plant_structure(self.plant_structures, self.current_package, parent_name)
+        line_split = process_line.split('-->')
+        alternate, uses_name = alternate_name(line_split[1])
         namespace = get_namespace(uses_name)
-        if not structure == self.current_structure:
-            self.current_structure = structure
-            if structure.type == '':
-                structure.type = 'class'
+        parent_name = line_split[0]
+        self.current_structure = find_plant_structure(self.plant_structures, self.current_package, parent_name)
+        if self.current_structure.type == '':
+                self.current_structure.type = 'class'
         uses_short_name = ''
         if namespace == '':
             uses_short_name = uses_name
         else:
             uses_short_name = uses_name.split('.')[-1] 
             self.current_structure.add_import(uses_name)
-        self.current_structure.add_variable(uses_short_name, uses_short_name)
+        self.current_structure.add_variable(alternate, uses_short_name)
         self.current_structure.add_uses(uses_short_name)
 
     def process_implements(self, in_line):
@@ -91,7 +88,7 @@ class ProcessInput:
 
     def process_composition(self, in_line):
         process_line = in_line.replace(' ', '')
-        composition_name = process_line.split('*--')[1]
+        alternate, composition_name = alternate_name(process_line.split('*--')[1])
         parent_name = process_line.split('*--')[0]
         structure = find_plant_structure(self.plant_structures, self.current_package, parent_name)
         namespace = get_namespace(composition_name)
@@ -107,8 +104,11 @@ class ProcessInput:
             composition_short_name = composition_name.split('.')[-1] 
             self.current_structure.add_import(composition_name)
             find_plant_structure(self.plant_structures, namespace, composition_short_name)
-        self.current_structure.add_variable(composition_short_name, f'{composition_short_name}[]')
-        self.current_structure.add_composition(composition_short_name)
+        if alternate == composition_name:
+            self.current_structure.add_variable(composition_short_name, f'{composition_short_name}[]')
+        else:
+            self.current_structure.add_variable(alternate, f'{composition_short_name}[]')
+        self.current_structure.add_composition(composition_short_name, alternate)
 
     def process_variable(self, in_line):
         process_line = in_line.replace(' ', '')
@@ -154,7 +154,6 @@ class ProcessInput:
 
     def process_type(self, in_line: str, in_type: str):
         self.current_type = extract_name(in_line)
-        # print(extract_name(in_line))
         namespace = get_namespace(self.current_type)
         if not namespace == '':
             if not self.current_package == namespace:
@@ -168,7 +167,6 @@ class ProcessInput:
         else:
             if not self.current_structure.type == in_type:
                 self.current_structure.type = in_type
-        print(f'{self.current_package}.{self.current_type}')
 
     def __init__(self, in_json_config):
         """

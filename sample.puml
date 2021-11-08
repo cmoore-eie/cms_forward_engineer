@@ -1,10 +1,10 @@
 @startuml sample
 
-!theme cerulean-outline
+' !theme cerulean-outline
 
 class cms.process.SampleClass6 {
-    var1 : int
-    var2 : String
+    -var1 : int
+    #var2 : String
     calculate2(value : BigDecimal) : int
 }
 
@@ -19,8 +19,8 @@ package cms.process {
         methodFive(valueOne : int) : List<String>
     }
     SampleClass1 --|> SampleClass2
-    SampleClass1 --> cms.utility.SampleUtility
-    SampleClass1 *-- SampleClass5
+    SampleClass1 --> cms.utility.SampleUtility : sampleName
+    SampleClass1 *-- SampleClass5 : sampleClasses
 
     abstract SampleClass2 {
 

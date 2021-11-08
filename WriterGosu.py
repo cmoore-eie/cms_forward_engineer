@@ -5,6 +5,7 @@ from Utilities import *
 class WriteGosu():
 
     def write(self):
+        print('Writing Gosu Classes')
         for structure in self.plant_structures:
             self.package_path = maybe_create_package(self.json_config['target_directory'], structure.package)
             self.create_class(structure)
@@ -91,14 +92,14 @@ class WriteGosu():
                 file.write('    return null\n')
             file.write('  }\n\n')
         for composition in in_structure.compositions:
-            method_name = 'add' + composition[0].upper() + composition[1:]
+            method_name = 'addTo' + composition.alternate[0].upper() + composition.alternate[1:]
             file.write('  public function ' + method_name + ' (')
-            file.write('inItem : ' + composition + ') {\n')
+            file.write('inItem : ' + composition.type + ') {\n')
             file.write('  }\n')
             file.write('\n')
-            method_name = 'remove' + composition[0].upper() + composition[1:]
+            method_name = 'removeFrom' + composition.alternate[0].upper() + composition.alternate[1:]
             file.write('  public function ' + method_name + ' (')
-            file.write('inItem : ' + composition + ') {\n')
+            file.write('inItem : ' + composition.type + ') {\n')
             file.write('  }\n')
 
     def create_composition(self, file, in_structure: PlantContent):

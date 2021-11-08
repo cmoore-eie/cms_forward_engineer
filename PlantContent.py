@@ -36,6 +36,15 @@ class PlantVariable:
         self.return_type: str = ''
 
 
+class PlantComposition:
+
+    def __init__(self):
+        self.name: str = ''
+        self.type: str = ''
+        self.scope: str = ''
+        self.alternate: str = ''
+
+
 
 class PlantContent:
 
@@ -52,9 +61,19 @@ class PlantContent:
         self.variables.append(new_variable)
         return new_variable
 
-    def add_composition(self, in_composition_name: str):
-        if not in_composition_name in self.compositions:
-            self.compositions.append(in_composition_name)
+    def add_composition(self, in_composition_name: str, alternative_name : str):
+        scope_type, new_comp_name = get_scope(in_composition_name)
+        for comp in self.compositions:
+            if comp.name == new_comp_name:
+                return comp
+            
+        new_composition = PlantComposition()
+        new_composition.name = new_comp_name
+        new_composition.type = new_comp_name
+        new_composition.scope = scope_type
+        new_composition.alternate = alternative_name
+        self.compositions.append(new_composition)
+        return new_composition
 
     def add_extension(self, in_extension_name: str):
         if not in_extension_name in self.extensions:
@@ -98,4 +117,4 @@ class PlantContent:
         self.implements: list[str] = list()
         self.uses: list[str] = list()
         self.imports: list[str] = list()
-        self.compositions: list[str] = list()
+        self.compositions: list[PlantComposition] = list()
