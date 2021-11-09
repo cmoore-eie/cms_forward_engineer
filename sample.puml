@@ -1,8 +1,9 @@
 @startuml sample
 
-' !theme cerulean-outline
+!theme guidewire from /Users/christophermoore/Development/Projects/cms/cms_community/plant_themes
+title Sample UML
 
-class cms.process.SampleClass6 {
+class cms.process.SampleClass6 <<Test>> {
     -var1 : int
     #var2 : String
     calculate2(value : BigDecimal) : int

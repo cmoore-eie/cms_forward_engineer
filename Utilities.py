@@ -121,10 +121,35 @@ def get_scope(in_name: str) -> str:
         return scope_type, test_name
 
 def alternate_name(in_line: str):
+    '''
+    Alternate name came come in two forms (1) The label at the end of the 
+    relationship definition the other is for cardinality where the lable can be defined
+    before the child class.
+    '''
+    return_value_alternative = in_line
+    retrun_value_name = in_line
+    if '"' in in_line:
+        return_value_alternative, retrun_value_name = __process_mid_label(in_line)
+    else:
+        return_value_alternative, retrun_value_name = __process_end_label(in_line)
+    print(in_line + " ~ " + retrun_value_name + " ~ " + return_value_alternative)
+    return return_value_alternative, retrun_value_name
+
+def __process_mid_label(in_line: str):
+    return_value_alternative = in_line
+    retrun_value_name = in_line
+    line_split = in_line.split('"')
+    if len(line_split) > 1:
+            retrun_value_name = line_split[2]
+            return_value_alternative = line_split[1]
+    return return_value_alternative, retrun_value_name
+
+def __process_end_label(in_line: str):
     return_value_alternative = in_line
     retrun_value_name = in_line
     line_split = in_line.split(':')
     if len(line_split) > 1:
-        retrun_value_name = line_split[0]
-        return_value_alternative = line_split[1]
+            retrun_value_name = line_split[0]
+            return_value_alternative = line_split[1]
     return return_value_alternative, retrun_value_name
+    
