@@ -52,14 +52,15 @@ def main(argv):
         except FileNotFoundError:
             print(f'The configuration file {config_file} has not been found')
             sys.exit(1)
-        config_json = checkAndFixJson(json.load(file))
+        config_json = check_and_fix_json(json.load(file))
         process = ProcessInput(config_json)
         process.process_input()
         if config_json['output_type'].lower() == 'gosu':
             writer = WriteGosu(config_json, process.plant_structures)
             writer.write()
 
-def checkAndFixJson(config_json):
+
+def check_and_fix_json(config_json):
     if 'default_package' not in config_json:
         config_json['default_package'] = 'cms.unknown'
         json_defaults[len(json_defaults) + 1] = f'Defaulting default_package to cms.unknown'
@@ -100,6 +101,7 @@ def checkAndFixJson(config_json):
         for default_item in json_defaults:
             print(f"({default_item}) : {json_defaults[default_item]}")
     return config_json
+
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:

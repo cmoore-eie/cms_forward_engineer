@@ -1,4 +1,3 @@
-from PlantContent import PlantContent
 from Utilities import *
 
 
@@ -54,12 +53,11 @@ class ProcessInput:
         parent_name = line_split[0]
         self.current_structure = find_plant_structure(self.plant_structures, self.current_package, parent_name)
         if self.current_structure.type == '':
-                self.current_structure.type = 'class'
-        uses_short_name = ''
+            self.current_structure.type = 'class'
         if namespace == '':
             uses_short_name = uses_name
         else:
-            uses_short_name = uses_name.split('.')[-1] 
+            uses_short_name = uses_name.split('.')[-1]
             self.current_structure.add_import(uses_name)
         self.current_structure.add_variable(alternate, uses_short_name)
         self.current_structure.add_uses(uses_short_name)
@@ -72,8 +70,8 @@ class ProcessInput:
         if not structure == self.current_structure:
             self.current_structure = structure
             if structure.type == '':
-                structure.type = 'class'   
-        self.current_structure.add_implement(implements_name)        
+                structure.type = 'class'
+        self.current_structure.add_implement(implements_name)
 
     def process_extends(self, in_line):
         process_line = in_line.replace(' ', '')
@@ -83,7 +81,7 @@ class ProcessInput:
         if not structure == self.current_structure:
             self.current_structure = structure
             if structure.type == '':
-                structure.type = 'class'   
+                structure.type = 'class'
         self.current_structure.add_extension(extends_name)
 
     def process_composition(self, in_line):
@@ -96,12 +94,11 @@ class ProcessInput:
             self.current_structure = structure
             if structure.type == '':
                 structure.type = 'class'
-        composition_short_name = ''
         if namespace == '':
             composition_short_name = composition_name
             find_plant_structure(self.plant_structures, self.current_package, composition_short_name)
         else:
-            composition_short_name = composition_name.split('.')[-1] 
+            composition_short_name = composition_name.split('.')[-1]
             self.current_structure.add_import(composition_name)
             find_plant_structure(self.plant_structures, namespace, composition_short_name)
         if alternate == composition_name:
@@ -157,9 +154,9 @@ class ProcessInput:
         namespace = get_namespace(self.current_type)
         if not namespace == '':
             if not self.current_package == namespace:
-                self.current_type = self.current_type.split('.')[-1] 
+                self.current_type = self.current_type.split('.')[-1]
                 self.current_package = namespace
-        
+
         self.current_structure = find_plant_structure(
             self.plant_structures, self.current_package, self.current_type)
         if self.current_structure.type == '':
@@ -170,12 +167,13 @@ class ProcessInput:
 
     def __init__(self, in_json_config):
         """
-        default_package should be passed in the configuration file, it will be used where there is no package defined in the puml file.
+        default_package should be passed in the configuration file, it will be used where there
+        is no package defined in the puml file.
         """
         self.json_config = in_json_config
         self.default_package = 'cms.test'
         self.current_package = self.default_package
         self.current_type = ''
-        self.current_structure: PlantContent
+        self.current_structure = None
         self.plant_structures: list[PlantContent] = list()
         self.lines: list[str] = list()
