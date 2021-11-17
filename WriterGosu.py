@@ -1,15 +1,35 @@
-from PlantContent import PlantContent
-from PlantContent import PlantMethod
 from Utilities import *
 
-class WriteGosu():
+
+def convert_type(in_type: str) -> str:
+    if in_type == 'bit':
+        return 'boolean'
+    if in_type == 'datetime':
+        return 'Date'
+    if in_type == 'mediumtext':
+        return 'String'
+    if in_type == 'nonnegativeinteger':
+        return 'int'
+    if in_type == 'phone':
+        return 'String'
+    if in_type == 'shorttext':
+        return 'String'
+    if in_type == 'spatialpoint':
+        return 'String'
+    if in_type == 'varchar':
+        return 'String'
+    if in_type == 'year':
+        return 'int'
+    return in_type
+
+
+class WriteGosu:
 
     def write(self):
         print('Writing Gosu Classes')
         for structure in self.plant_structures:
             self.package_path = maybe_create_package(self.json_config['target_directory'], structure.package)
             self.create_class(structure)
-
 
     def create_class(self, in_structure: PlantContent):
         class_file_name = self.package_path
@@ -52,31 +72,40 @@ class WriteGosu():
         file.write('}')
         file.close()
 
-
     def create_uses(self, file, in_structure: PlantContent):
+        """
+        Create the uses statements, while there are some that have been created during the processing
+        of the puml some additional ones are needed for some of the data types, these are added here.
+        """
+        for var in in_structure.variables:
+            if var.type == 'BigDecimal':
+                in_structure.add_implement('java.math,BigDecimal')
+            if var.type == 'Date':
+                in_structure.add_implement('java.util.Date')
         if len(in_structure.imports) == 0:
             return
         for uses in in_structure.imports:
             file.write(f'uses {uses}\n')
         file.write('\n')
+        return self
 
-
-    def create_variables(self, file, in_structure:PlantContent):
+    def create_variables(self, file, in_structure: PlantContent):
         for variable in in_structure.variables:
             var_name = '_' + variable.name[0].lower() + variable.name[1:]
             var_as = variable.name[0].upper() + variable.name[1:]
-            var_type = self.__convert_type(variable.type)
+            var_type = convert_type(variable.type)
             if variable.scope == 'protected':
                 file.write(f'  protected var {var_name} : {var_type} as {var_as}\n')
             if variable.scope == 'private':
                 file.write(f'  var {var_name} : {var_type}\n')
             if variable.scope == 'public':
                 file.write(f'  var {var_name} : {var_type} as {var_as}\n')
+        return self
 
-    def create_methods(self, file, in_structure:PlantContent):
+    def create_methods(self, file, in_structure: PlantContent):
         for method in in_structure.methods:
             method_name = method.name
-            method_return_type = self.__convert_type(method.return_type)
+            method_return_type = convert_type(method.return_type)
             method_scope = method.scope
             file.write(f'  {method_scope} function ' + method_name + ' (')
             for idx, param in enumerate(method.parameters):
@@ -101,31 +130,10 @@ class WriteGosu():
             file.write('  public function ' + method_name + ' (')
             file.write('inItem : ' + composition.type + ') {\n')
             file.write('  }\n')
+        return self
 
     def create_composition(self, file, in_structure: PlantContent):
         pass
-            
-    def __convert_type(self, in_type: str) -> str:
-        if in_type == 'bit':
-            return 'boolean'
-        if in_type == 'datetime':
-            return 'Date'
-        if in_type == 'mediumtext':
-            return 'String'
-        if in_type == 'nonnegativeinteger':
-            return int
-        if in_type == 'phone':
-            return 'String'
-        if in_type == 'shorttext':
-            return 'String'
-        if in_type == 'spatialpoint':
-            return 'String'
-        if in_type == 'varchar':
-            return 'String'
-        if in_type == 'year':
-            return 'int'
-        return in_type
-        
 
     def __init__(self, in_json_config, in_plant_structures: list[PlantContent]):
         self.json_config = in_json_config

@@ -1,19 +1,20 @@
-def get_scope(in_name: str) -> str:
-        scope_types = {'+', '-', '~', '#'}
-        scope_type = 'public'
-        test_name = in_name
-        if test_name[0] in scope_types:
-            if test_name[0] == '+':
-                scope_type = 'public'
-            elif test_name[0] == '-':
-                scope_type = 'private'
-            elif test_name[0] == '~':
-                scope_type = 'protected'
-            elif test_name[0] == '#':
-                scope_type = 'protected'
-            test_name = test_name[1:]
+def get_scope(in_name: str):
+    scope_types = {'+', '-', '~', '#'}
+    scope_type = 'public'
+    test_name = in_name
+    if test_name[0] in scope_types:
+        if test_name[0] == '+':
+            scope_type = 'public'
+        elif test_name[0] == '-':
+            scope_type = 'private'
+        elif test_name[0] == '~':
+            scope_type = 'protected'
+        elif test_name[0] == '#':
+            scope_type = 'protected'
+        test_name = test_name[1:]
 
-        return scope_type, test_name
+    return scope_type, test_name
+
 
 class PlantMethod:
 
@@ -26,6 +27,7 @@ class PlantMethod:
         self.parameters: dict[str, str] = dict()
         self.return_type: str = ''
         self.scope: str = ''
+
 
 class PlantVariable:
 
@@ -45,7 +47,6 @@ class PlantComposition:
         self.alternate: str = ''
 
 
-
 class PlantContent:
 
     def add_variable(self, in_variable_name: str, in_variable_type: str):
@@ -53,7 +54,7 @@ class PlantContent:
         for var in self.variables:
             if var.name == new_var_name:
                 return var
-            
+
         new_variable = PlantVariable()
         new_variable.name = new_var_name
         new_variable.type = in_variable_type
@@ -61,12 +62,12 @@ class PlantContent:
         self.variables.append(new_variable)
         return new_variable
 
-    def add_composition(self, in_composition_name: str, alternative_name : str):
+    def add_composition(self, in_composition_name: str, alternative_name: str):
         scope_type, new_comp_name = get_scope(in_composition_name)
         for comp in self.compositions:
             if comp.name == new_comp_name:
                 return comp
-            
+
         new_composition = PlantComposition()
         new_composition.name = new_comp_name
         new_composition.type = new_comp_name
@@ -76,11 +77,11 @@ class PlantContent:
         return new_composition
 
     def add_extension(self, in_extension_name: str):
-        if not in_extension_name in self.extensions:
+        if in_extension_name not in self.extensions:
             self.extensions.append(in_extension_name)
 
     def add_import(self, in_import_name: str):
-        if not in_import_name in self.imports:
+        if in_import_name not in self.imports:
             self.imports.append(in_import_name)
 
     def add_implement(self, in_implement_name: str):
@@ -88,23 +89,20 @@ class PlantContent:
             self.implements.append(in_implement_name)
 
     def add_uses(self, in_uses_name: str):
-        if not in_uses_name in self.extensions:
+        if in_uses_name not in self.extensions:
             self.uses.append(in_uses_name)
 
     def add_method(self, in_method_name: str, in_method_return_type: str) -> PlantMethod:
-        method_found = False
         scope_type, new_method_name = get_scope(in_method_name)
         for method in self.methods:
             if new_method_name == method.name:
-                method_found = True
                 return method
-        if method_found == False:
-            new_method = PlantMethod()
-            new_method.name = new_method_name
-            new_method.return_type = in_method_return_type
-            new_method.scope = scope_type
-            self.methods.append(new_method)
-            return new_method
+        new_method = PlantMethod()
+        new_method.name = new_method_name
+        new_method.return_type = in_method_return_type
+        new_method.scope = scope_type
+        self.methods.append(new_method)
+        return new_method
 
     def __init__(self):
         self.name: str = ''
