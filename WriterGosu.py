@@ -136,7 +136,7 @@ class WriteGosu:
             file.write(template_str)
             file.write('\n')
             template_str = Utilities.build_template('removefrom', namespace)
-            file.write.write(template_str)
+            file.write(template_str)
             file.write('\n')
         return self
 
