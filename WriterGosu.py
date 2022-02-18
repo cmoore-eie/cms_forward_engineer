@@ -1,4 +1,6 @@
+import Utilities
 from Utilities import *
+from Cheetah.Template import Template
 
 
 def convert_type(in_type: str) -> str:
@@ -69,6 +71,9 @@ class WriteGosu:
         if len(in_structure.methods) > 0:
             self.create_methods(file, in_structure)
             file.write('\n')
+        if len(in_structure.compositions) > 0:
+            self.create_composition(file, in_structure)
+            file.write('\n')
         file.write('}')
         file.close()
 
@@ -120,20 +125,25 @@ class WriteGosu:
             if not method_return_type == '':
                 file.write('    return null\n')
             file.write('  }\n\n')
-        for composition in in_structure.compositions:
-            method_name = 'addTo' + composition.alternate[0].upper() + composition.alternate[1:]
-            file.write('  public function ' + method_name + ' (')
-            file.write('inItem : ' + composition.type + ') {\n')
-            file.write('  }\n')
-            file.write('\n')
-            method_name = 'removeFrom' + composition.alternate[0].upper() + composition.alternate[1:]
-            file.write('  public function ' + method_name + ' (')
-            file.write('inItem : ' + composition.type + ') {\n')
-            file.write('  }\n')
         return self
 
     def create_composition(self, file, in_structure: PlantContent):
-        pass
+        for composition in in_structure.compositions:
+            attribute_name = composition.alternate[0].upper() + composition.alternate[1:]
+            namespace = {'AttributeName': attribute_name, 'AttributeType': composition.type,
+                         'AttributeParent': in_structure.name}
+            template_str = Utilities.build_template('addto', namespace)
+            file.write(template_str)
+            file.write('\n')
+            template_str = Utilities.build_template('removefrom', namespace)
+            file.write(template_str)
+            file.write('\n')
+        return self
+
+    def build_template(self, template_name, namespace) -> str:
+        template_file = f'{self.json_config["template_directory"]}\{template_name}'
+        template = Template(file=template_file, searchList=[namespace])
+        return str(template)
 
     def __init__(self, in_json_config, in_plant_structures: list[PlantContent]):
         self.json_config = in_json_config

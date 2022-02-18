@@ -171,7 +171,7 @@ class ProcessInput:
         is no package defined in the puml file.
         """
         self.json_config = in_json_config
-        self.default_package = 'cms.test'
+        self.default_package = self.json_config['default_package']
         self.current_package = self.default_package
         self.current_type = ''
         self.current_structure = None

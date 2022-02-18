@@ -1,5 +1,8 @@
 import os
+
+import PUMLTemplate
 from PlantContent import PlantContent
+from Cheetah.Template import Template
 
 relationships = {'-->', '..>', '*--'}
 
@@ -146,3 +149,13 @@ def __process_end_label(in_line: str):
         return_value_name = line_split[0]
         return_value_alternative = line_split[1]
     return return_value_alternative, return_value_name
+
+
+def build_template(template_name, namespace) -> str:
+    if template_name == 'addto':
+        template_str = PUMLTemplate.get_addto_template()
+    elif template_name == 'removefrom':
+        template_str = PUMLTemplate.get_removefrom_template()
+
+    template = Template(template_str, searchList=[namespace])
+    return str(template)
