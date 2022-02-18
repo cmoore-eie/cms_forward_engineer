@@ -1,3 +1,4 @@
+import Utilities
 from Utilities import *
 from Cheetah.Template import Template
 
@@ -131,10 +132,13 @@ class WriteGosu:
             attribute_name = composition.alternate[0].upper() + composition.alternate[1:]
             namespace = {'AttributeName': attribute_name, 'AttributeType': composition.type,
                          'AttributeParent': in_structure.name}
-            file.write(self.build_template('AddTo.tmpl', namespace))
+            template_str = Utilities.build_template('addto', namespace)
+            file.write.write(template_str)
             file.write('\n')
-            file.write(self.build_template('RemoveFrom.tmpl', namespace))
+            template_str = Utilities.build_template('removefrom', namespace)
+            file.write.write(template_str)
             file.write('\n')
+        return self
 
     def build_template(self, template_name, namespace) -> str:
         template_file = f'{self.json_config["template_directory"]}\{template_name}'
