@@ -133,7 +133,7 @@ class WriteGosu:
             namespace = {'AttributeName': attribute_name, 'AttributeType': composition.type,
                          'AttributeParent': in_structure.name}
             template_str = Utilities.build_template('addto', namespace)
-            file.write.write(template_str)
+            file.write(template_str)
             file.write('\n')
             template_str = Utilities.build_template('removefrom', namespace)
             file.write.write(template_str)
